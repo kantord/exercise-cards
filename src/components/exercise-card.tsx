@@ -4,19 +4,6 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 
-/** Add fonts into your Next.js project:
-
-import { Inter } from 'next/font/google'
-
-inter({
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-To read more about using these font, please visit the Next.js documentation:
-- App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
-- Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
-**/
 import {
   Card,
   CardContent,
@@ -25,10 +12,26 @@ import {
   CardDescription,
   CardFooter,
 } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { EllipsisVertical, Trash2 } from 'lucide-react';
+import { Card as CardType, useCardStore } from '@/app/stores';
 
-export function ExerciseCard() {
+type Props = {
+  card: CardType;
+};
+
+export function ExerciseCard({ card }: Props) {
+  const { deleteCard } = useCardStore();
+
   return (
     <Card className="w-full max-w-md">
       <CardContent className="flex flex-wrap gap-2">
@@ -39,20 +42,31 @@ export function ExerciseCard() {
         <div>Cardio</div>
       </CardContent>
       <CardHeader>
-        <CardTitle>Pushups</CardTitle>
-        <CardDescription>
-          Strengthen your chest, shoulders, and triceps with this classic exercise.
-        </CardDescription>
+        <CardTitle>{card.title}</CardTitle>
+        <CardDescription>{card.description}</CardDescription>
       </CardHeader>
       <CardFooter className="flex items-center justify-between">
         <Link href="#" target="_blank" className="text-primary hover:underline" prefetch={false}>
           Learn
         </Link>
         <div className="flex gap-4">
-          <Button variant="secondary" className="px-4 py-2">
-            Skip
-          </Button>
           <Button className="px-6 py-2">Done</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <EllipsisVertical />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Additional actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600" onClick={() => deleteCard(card.id)}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Permanently delete</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>Billing</DropdownMenuItem>
+              <DropdownMenuItem>Team</DropdownMenuItem>
+              <DropdownMenuItem>Subscription</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardFooter>
     </Card>
