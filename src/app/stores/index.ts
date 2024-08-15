@@ -13,6 +13,7 @@ type CardStore = {
   cards: Card[];
   addCard: () => string;
   deleteCard: (cardId: string) => void;
+  updateCard: (cardId: string, newCard: Card) => void;
 };
 
 export const useCardStore = create<CardStore>()(
@@ -42,6 +43,13 @@ export const useCardStore = create<CardStore>()(
           cards: get().cards.filter((card) => card.id !== cardId),
         });
       },
+
+      updateCard(cardId: string, newCard: Card) {
+        set({
+          cards: [...get().cards.filter((card) => card.id !== cardId), newCard],
+        });
+      },
+
     }),
     {
       name: 'card-storage',

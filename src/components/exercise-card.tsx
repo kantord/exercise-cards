@@ -22,22 +22,52 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { EllipsisVertical, Trash2 } from 'lucide-react';
+import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { Card as CardType, useCardStore } from '@/app/stores';
-import { useCallback } from 'react';
+import { FocusEventHandler, SyntheticEvent, useCallback } from 'react';
 
 type Props = {
   card: CardType;
 };
 
+const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) => {
+  const { updateCard } = useCardStore();
+
+  const updateValueCallback = useCallback(
+    (newValue: string | null) => {
+      if (newValue === null) {
+        throw new Error('This should never happen');
+      }
+
+      updateCard(card.id, {
+        ...card,
+        [attributeName]: newValue,
+      });
+    },
+    [attributeName, card, updateCard],
+  );
+
+
+  return {
+    contentEditable: 'plaintext-only' as const,
+    dangerouslySetInnerHTML: { __html: `${card[attributeName]}` },
+
+    onBlur(event: SyntheticEvent) {
+      updateValueCallback(event.currentTarget.innerHTML ?? null);
+    },
+  };
+};
+
 export function ExerciseCard({ card }: Props) {
-  const { deleteCard } = useCardStore();
+  const { deleteCard, updateCard } = useCardStore();
   const handleDeleteCard = useCallback(() => {
-    if (confirm("Are you sure you want to delete this card?")) {
-      deleteCard(card.id)
+    if (confirm('Are you sure you want to delete this card?')) {
+      deleteCard(card.id);
     }
-  }
-  , [card.id, deleteCard])
+  }, [card.id, deleteCard]);
+
+  const editableTitle = useInPlaceEditableField('title', card);
+  const editableDescription = useInPlaceEditableField('description', card);
 
   return (
     <Card className="w-full max-w-md">
@@ -49,8 +79,8 @@ export function ExerciseCard({ card }: Props) {
         <div>Cardio</div>
       </CardContent>
       <CardHeader>
-        <CardTitle>{card.title}</CardTitle>
-        <CardDescription>{card.description}</CardDescription>
+        <CardTitle {...editableTitle} />
+        <CardDescription {...editableDescription} />
       </CardHeader>
       <CardFooter className="flex items-center justify-between">
         <Link href="#" target="_blank" className="text-primary hover:underline" prefetch={false}>
@@ -69,9 +99,10 @@ export function ExerciseCard({ card }: Props) {
                 <Trash2 className="mr-2 h-4 w-4" />
                 <span>Permanently delete</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Pencil className="mr-2 h-4 w-4" />
+                <span>Edit</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
