@@ -1,13 +1,15 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
+import { sortBy } from 'lodash';
+import { Carrois_Gothic } from 'next/font/google';
 
 export type Card = {
   id: string;
   title: string;
   description: string;
   learnHref?: string;
-  groups: ExerciseGroupName[]
+  groups: ExerciseGroupName[];
 };
 
 type CardStore = {
@@ -15,6 +17,7 @@ type CardStore = {
   addCard: () => string;
   deleteCard: (cardId: string) => void;
   updateCard: (cardId: string, newCard: Card) => void;
+  toggleGroupInCard: (cardId: string, groupName: string) => void;
 };
 
 export const useCardStore = create<CardStore>()(
@@ -52,6 +55,26 @@ export const useCardStore = create<CardStore>()(
         });
       },
 
+      toggleGroupInCard(cardId: string, groupName: string) {
+        const card = get().cards.find((card) => card.id === cardId);
+        if (card === undefined) {
+          throw new Error('card not found');
+        }
+
+        const newGroups = card.groups.includes(groupName)
+          ? card.groups.filter((item) => item !== groupName)
+          : [...card.groups, groupName];
+
+        set({
+          cards: [
+            ...get().cards.filter((card) => card.id !== cardId),
+            {
+              ...card,
+              groups: newGroups,
+            },
+          ],
+        });
+      },
     }),
     {
       name: 'card-storage',
@@ -59,23 +82,46 @@ export const useCardStore = create<CardStore>()(
   ),
 );
 
-
-
 const exerciseGroups = [
-    { "name": "Chest", "supergroup": "Upper Body", "type": "muscle" },
-    { "name": "Back", "supergroup": "Upper Body", "type": "muscle" },
-    { "name": "Shoulders", "supergroup": "Upper Body", "type": "muscle" },
-    { "name": "Arms", "supergroup": "Upper Body", "type": "muscle" },
-    { "name": "Abs", "supergroup": "Core", "type": "muscle" },
-    { "name": "Obliques", "supergroup": "Core", "type": "muscle" },
-    { "name": "Lower Back", "supergroup": "Core", "type": "muscle" },
-    { "name": "Quadriceps", "supergroup": "Lower Body", "type": "muscle" },
-    { "name": "Hamstrings", "supergroup": "Lower Body", "type": "muscle" },
-    { "name": "Glutes", "supergroup": "Lower Body", "type": "muscle" },
-    { "name": "Calves", "supergroup": "Lower Body", "type": "muscle" },
-    { "name": "Upper Body Stretching", "supergroup": "Upper Body", "type": "strength" },
-    { "name": "Core Stretching", "supergroup": "Core", "type": "strength" },
-    { "name": "Lower Body Stretching", "supergroup": "Lower Body", "type": "strength" },
-    { "name": "Cardio", "supergroup": "Cardio", "type": "cardio" }
-]
-type ExerciseGroupName = typeof exerciseGroups[number]["name"]
+  { name: 'Chest', supergroup: 'Upper Body', type: 'muscle' },
+  { name: 'Back', supergroup: 'Upper Body', type: 'muscle' },
+  { name: 'Shoulders', supergroup: 'Upper Body', type: 'muscle' },
+  { name: 'Arms', supergroup: 'Upper Body', type: 'muscle' },
+  { name: 'Abs', supergroup: 'Core', type: 'muscle' },
+  { name: 'Obliques', supergroup: 'Core', type: 'muscle' },
+  { name: 'Lower Back', supergroup: 'Core', type: 'muscle' },
+  { name: 'Quadriceps', supergroup: 'Lower Body', type: 'muscle' },
+  { name: 'Hamstrings', supergroup: 'Lower Body', type: 'muscle' },
+  { name: 'Glutes', supergroup: 'Lower Body', type: 'muscle' },
+  { name: 'Calves', supergroup: 'Lower Body', type: 'muscle' },
+  { name: 'Upper Body Stretching', supergroup: 'Upper Body', type: 'stretching' },
+  { name: 'Core Stretching', supergroup: 'Core', type: 'stretching' },
+  { name: 'Lower Body Stretching', supergroup: 'Lower Body', type: 'stretching' },
+  { name: 'Cardio', supergroup: 'Cardio', type: 'cardio' },
+];
+type ExerciseGroup = (typeof exerciseGroups)[number];
+type ExerciseGroupName = ExerciseGroup['name'];
+
+type SortedExerciseGroups = {
+  superGroup: string;
+  items: ExerciseGroup[];
+}[];
+
+export const useExerciseGroups = (): SortedExerciseGroups => {
+  const superGroups: Record<string, Set<ExerciseGroup>> = {};
+
+  for (const group of exerciseGroups) {
+    if (!(group.supergroup in superGroups)) {
+      superGroups[group.supergroup] = new Set();
+    }
+
+    superGroups[group.supergroup].add(group);
+  }
+
+  return Object.keys(superGroups)
+    .sort()
+    .map((superGroup: string) => ({
+      superGroup,
+      items: sortBy(Array.from(superGroups[superGroup]), (item: ExerciseGroup) => item.name),
+    }));
+};
