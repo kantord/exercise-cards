@@ -24,7 +24,19 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { Card as CardType, useCardStore } from '@/app/stores';
-import { FocusEventHandler, SyntheticEvent, useCallback } from 'react';
+import { SyntheticEvent, useCallback } from 'react';
+
+import { createHash } from 'crypto';
+
+function stringToPastelHsl(str: string): string {
+  const hash = createHash('sha256').update(str).digest('hex');
+  const intHash = parseInt(hash.substring(0, 8), 16);
+  const hue = intHash % 360;
+  const saturation = 80;
+  const lightness = 95;
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
 
 type Props = {
   card: CardType;
@@ -47,15 +59,13 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
     [attributeName, card, updateCard],
   );
 
-
   return {
     contentEditable: 'plaintext-only' as const,
     dangerouslySetInnerHTML: { __html: `${card[attributeName]}` },
 
-    onInput(event: SyntheticEvent) {
+    onBlur(event: SyntheticEvent) {
       updateValueCallback(event.currentTarget.innerHTML ?? null);
-    }
-
+    },
   };
 };
 
@@ -71,7 +81,7 @@ export function ExerciseCard({ card }: Props) {
   const editableDescription = useInPlaceEditableField('description', card);
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md" style={{ backgroundColor: stringToPastelHsl(card.id) }}>
       <CardContent className="flex flex-wrap gap-2">
         <div>Upper Body</div>
         <div>Strength</div>
