@@ -7,6 +7,7 @@ export type Card = {
   title: string;
   description: string;
   learnHref?: string;
+  groups: ExerciseGroupName[]
 };
 
 type CardStore = {
@@ -31,6 +32,7 @@ export const useCardStore = create<CardStore>()(
               id,
               title: 'New Card',
               description: 'Card description',
+              groups: [],
             },
           ],
         });
@@ -56,3 +58,24 @@ export const useCardStore = create<CardStore>()(
     },
   ),
 );
+
+
+
+const exerciseGroups = [
+    { "name": "Chest", "supergroup": "Upper Body", "type": "muscle" },
+    { "name": "Back", "supergroup": "Upper Body", "type": "muscle" },
+    { "name": "Shoulders", "supergroup": "Upper Body", "type": "muscle" },
+    { "name": "Arms", "supergroup": "Upper Body", "type": "muscle" },
+    { "name": "Abs", "supergroup": "Core", "type": "muscle" },
+    { "name": "Obliques", "supergroup": "Core", "type": "muscle" },
+    { "name": "Lower Back", "supergroup": "Core", "type": "muscle" },
+    { "name": "Quadriceps", "supergroup": "Lower Body", "type": "muscle" },
+    { "name": "Hamstrings", "supergroup": "Lower Body", "type": "muscle" },
+    { "name": "Glutes", "supergroup": "Lower Body", "type": "muscle" },
+    { "name": "Calves", "supergroup": "Lower Body", "type": "muscle" },
+    { "name": "Upper Body Stretching", "supergroup": "Upper Body", "type": "strength" },
+    { "name": "Core Stretching", "supergroup": "Core", "type": "strength" },
+    { "name": "Lower Body Stretching", "supergroup": "Lower Body", "type": "strength" },
+    { "name": "Cardio", "supergroup": "Cardio", "type": "cardio" }
+]
+type ExerciseGroupName = typeof exerciseGroups[number]["name"]
