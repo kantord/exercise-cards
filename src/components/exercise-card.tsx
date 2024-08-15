@@ -83,7 +83,7 @@ export function ExerciseCard({ card }: Props) {
   const exerciseGroups = useExerciseGroups();
 
   return (
-    <Card className="w-full max-w-md" style={{ backgroundColor: colorFromStringHash(card.id, 95) }}>
+    <Card className="max-w-xl min-w-md w-full" style={{ backgroundColor: colorFromStringHash(card.id, 95) }}>
       <CardHeader>
         <CardTitle {...editableTitle} />
         <CardDescription {...editableDescription} />

@@ -15,7 +15,7 @@ export default function HomePageContent() {
   return (
     <main className="flex justify-center p-8 flex-col">
       <Button onClick={addCard}>Add Card</Button>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-row gap-4 flex-wrap justify-center">
         {sortedCards.map((card) => (
           <ExerciseCard key={card.id} card={card} />
         ))}

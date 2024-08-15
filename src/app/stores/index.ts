@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
 import { sortBy } from 'lodash';
-import { Carrois_Gothic } from 'next/font/google';
 
 export type Card = {
   id: string;
