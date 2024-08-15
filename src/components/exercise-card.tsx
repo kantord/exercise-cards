@@ -52,14 +52,15 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
     contentEditable: 'plaintext-only' as const,
     dangerouslySetInnerHTML: { __html: `${card[attributeName]}` },
 
-    onBlur(event: SyntheticEvent) {
+    onInput(event: SyntheticEvent) {
       updateValueCallback(event.currentTarget.innerHTML ?? null);
-    },
+    }
+
   };
 };
 
 export function ExerciseCard({ card }: Props) {
-  const { deleteCard, updateCard } = useCardStore();
+  const { deleteCard } = useCardStore();
   const handleDeleteCard = useCallback(() => {
     if (confirm('Are you sure you want to delete this card?')) {
       deleteCard(card.id);
