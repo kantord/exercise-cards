@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EllipsisVertical, Trash2 } from 'lucide-react';
 import { Card as CardType, useCardStore } from '@/app/stores';
+import { useCallback } from 'react';
 
 type Props = {
   card: CardType;
@@ -31,6 +32,12 @@ type Props = {
 
 export function ExerciseCard({ card }: Props) {
   const { deleteCard } = useCardStore();
+  const handleDeleteCard = useCallback(() => {
+    if (confirm("Are you sure you want to delete this card?")) {
+      deleteCard(card.id)
+    }
+  }
+  , [card.id, deleteCard])
 
   return (
     <Card className="w-full max-w-md">
@@ -58,7 +65,7 @@ export function ExerciseCard({ card }: Props) {
             <DropdownMenuContent>
               <DropdownMenuLabel>Additional actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600" onClick={() => deleteCard(card.id)}>
+              <DropdownMenuItem className="text-red-600" onClick={handleDeleteCard}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 <span>Permanently delete</span>
               </DropdownMenuItem>
