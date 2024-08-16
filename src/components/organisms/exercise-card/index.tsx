@@ -80,10 +80,10 @@ export function ExerciseCard({ card }: Props) {
           ]}
         </div>
         <div className="flex grow gap-4">
-          <div className="flex justify-end w-full">
+          <div className="flex w-full justify-end">
             <div className="flex">
               <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
-                Done
+                Finish Set
               </Button>
               <ActionsMenu card={card} />
             </div>
