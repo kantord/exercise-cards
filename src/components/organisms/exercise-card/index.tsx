@@ -14,37 +14,19 @@ import {
 } from '@/components/ui/card';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import {
-  BicepsFlexed,
-  EllipsisVertical,
-  Heart,
-  MoveHorizontal,
-  Pencil,
-  Trash2,
-} from 'lucide-react';
-import { Card as CardType, useCardStore, useExerciseGroups } from '@/app/stores';
+import { EllipsisVertical, Trash2 } from 'lucide-react';
+import { Card as CardType, useCardStore } from '@/app/stores';
 import { SyntheticEvent, useCallback } from 'react';
 
-import { createHash } from 'crypto';
-import DropdownMenuLabelWithIcon from '@/components/structures/DropdownMenuLabelWithIcon';
-
-function colorFromStringHash(str: string, lightness: number): string {
-  const hash = createHash('sha256').update(str).digest('hex');
-  const intHash = parseInt(hash.substring(0, 8), 16);
-  const hue = intHash % 360;
-  const saturation = 80;
-
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-}
+import ExerciseGroupEditor from './exercise-group-editor';
+import { colorFromStringHash } from '@/lib/utils';
 
 type Props = {
   card: CardType;
@@ -77,29 +59,8 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
   };
 };
 
-type ExerciseGroupLabelProps = {
-  value: string;
-};
-
-function ExerciseGroupLabel({ value }: ExerciseGroupLabelProps) {
-  switch (value) {
-    case 'cardio':
-      return <DropdownMenuLabelWithIcon icon={Heart}>Cardio</DropdownMenuLabelWithIcon>;
-    case 'muscle':
-      return (
-        <DropdownMenuLabelWithIcon icon={BicepsFlexed}>Muscle building</DropdownMenuLabelWithIcon>
-      );
-    case 'stretching':
-      return (
-        <DropdownMenuLabelWithIcon icon={MoveHorizontal}>Stretching</DropdownMenuLabelWithIcon>
-      );
-    default:
-      throw new Error(`unknown exercise group '${value}'`);
-  }
-}
-
 export function ExerciseCard({ card }: Props) {
-  const { deleteCard, toggleGroupInCard } = useCardStore();
+  const { deleteCard } = useCardStore();
   const handleDeleteCard = useCallback(() => {
     if (confirm('Are you sure you want to delete this card?')) {
       deleteCard(card.id);
@@ -108,7 +69,6 @@ export function ExerciseCard({ card }: Props) {
 
   const editableTitle = useInPlaceEditableField('title', card);
   const editableDescription = useInPlaceEditableField('description', card);
-  const exerciseGroups = useExerciseGroups();
 
   return (
     <Card
@@ -120,50 +80,7 @@ export function ExerciseCard({ card }: Props) {
         <CardDescription {...editableDescription} />
       </CardHeader>
       <CardContent>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <div className="flex flex-wrap gap-2">
-              {card.groups.length > 0 ? (
-                card.groups.sort().map((tag) => (
-                  <div
-                    className="rounded-lg px-2 py-1 text-white"
-                    style={{
-                      backgroundColor: colorFromStringHash(tag, 30),
-                    }}
-                    key={tag}
-                  >
-                    {tag}
-                  </div>
-                ))
-              ) : (
-                <div className="flex gap-2 rounded-lg border-2 border-gray-500 px-2 py-1 text-gray-500 items-center">
-                  Add muscle groups
-                  <Pencil size={16} />
-                </div>
-              )}
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Edit muscle groups</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <ScrollArea className="h-[200px]">
-              {exerciseGroups.map(({ type, items }) => (
-                <>
-                  <ExerciseGroupLabel value={type} />
-                  {items.map((item) => (
-                    <DropdownMenuCheckboxItem
-                      key={item.name}
-                      checked={card.groups.includes(item.name)}
-                      onCheckedChange={() => toggleGroupInCard(card.id, item.name)}
-                    >
-                      {item.name}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </>
-              ))}
-            </ScrollArea>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ExerciseGroupEditor card={card} />
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <div />
