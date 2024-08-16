@@ -14,7 +14,7 @@ export default function HomePageContent() {
 
   return (
     <main className="flex flex-col justify-center p-8">
-      <div className="flex flex-row flex-wrap justify-center gap-4 max-w-[800px] mx-auto">
+      <div className="flex flex-row flex-wrap justify-center gap-4 max-w-[800px] mx-auto w-full">
         {sortedCards.map((card) => (
           <ExerciseCard key={card.id} card={card} />
         ))}
