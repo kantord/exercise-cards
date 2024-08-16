@@ -19,7 +19,7 @@ type Props = {
 
 export default function ActionsMenu({ card }: Props) {
   const { deleteCard, resetProgressToday, updateCard } = useCardStore();
-  const { isDone } = useAnalyzedCard(card);
+  const { doneToday } = useAnalyzedCard(card);
 
   const handleDeleteCard = useCallback(() => {
     if (confirm('Are you sure you want to delete this card?')) {
@@ -57,7 +57,10 @@ export default function ActionsMenu({ card }: Props) {
           <Trash2 className="mr-2 h-4 w-4" />
           <span>Permanently delete</span>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled={!isDone} onClick={() => resetProgressToday(card.id)}>
+        <DropdownMenuItem
+          disabled={doneToday.length <= 0}
+          onClick={() => resetProgressToday(card.id)}
+        >
           <Undo className="mr-2 h-4 w-4" />
           <span>Reset today&apos;s progres</span>
         </DropdownMenuItem>
