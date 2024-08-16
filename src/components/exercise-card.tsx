@@ -159,9 +159,7 @@ export function ExerciseCard({ card }: Props) {
         </DropdownMenu>
       </CardContent>
       <CardFooter className="flex items-center justify-between">
-        <Link href="#" target="_blank" className="text-primary hover:underline" prefetch={false}>
-          Learn
-        </Link>
+        <div />
         <div className="flex gap-4">
           <Button className="px-6 py-2">Done</Button>
           <DropdownMenu>
