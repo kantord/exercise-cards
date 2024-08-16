@@ -70,7 +70,7 @@ export function ExerciseCard({ card }: Props) {
       <CardContent>
         <ExerciseGroupEditor card={card} />
       </CardContent>
-      <CardFooter className="flex items-center justify-between">
+      <CardFooter className="flex flex-wrap items-center justify-between gap-8">
         <div className="flex gap-1">
           {[
             ...doneToday.map(() => <CircleCheckBig key={uuidv4()} className="h-4 w-4" />),
@@ -79,11 +79,15 @@ export function ExerciseCard({ card }: Props) {
               .map(() => <Circle key={uuidv4()} className="h-4 w-4" />),
           ]}
         </div>
-        <div className="flex gap-4">
-          <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
-            Done
-          </Button>
-          <ActionsMenu card={card} />
+        <div className="flex grow gap-4">
+          <div className="flex justify-end w-full">
+            <div>
+              <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
+                Done
+              </Button>
+              <ActionsMenu card={card} />
+            </div>
+          </div>
         </div>
       </CardFooter>
     </Card>
