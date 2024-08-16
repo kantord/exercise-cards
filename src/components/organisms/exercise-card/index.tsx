@@ -22,7 +22,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   BicepsFlexed,
@@ -36,7 +35,7 @@ import { Card as CardType, useCardStore, useExerciseGroups } from '@/app/stores'
 import { SyntheticEvent, useCallback } from 'react';
 
 import { createHash } from 'crypto';
-import DropdownMenuLabelWithIcon from './structures/DropdownMenuLabelWithIcon';
+import DropdownMenuLabelWithIcon from '@/components/structures/DropdownMenuLabelWithIcon';
 
 function colorFromStringHash(str: string, lightness: number): string {
   const hash = createHash('sha256').update(str).digest('hex');
@@ -120,21 +119,29 @@ export function ExerciseCard({ card }: Props) {
         <CardTitle {...editableTitle} />
         <CardDescription {...editableDescription} />
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
-        {card.groups.sort().map((tag) => (
-          <div
-            className="rounded-lg px-2 py-1 text-white"
-            style={{
-              backgroundColor: colorFromStringHash(tag, 30),
-            }}
-            key={tag}
-          >
-            {tag}
-          </div>
-        ))}
+      <CardContent>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Pencil size={18} />
+            <div className="flex flex-wrap gap-2">
+              {card.groups.length > 0 ? (
+                card.groups.sort().map((tag) => (
+                  <div
+                    className="rounded-lg px-2 py-1 text-white"
+                    style={{
+                      backgroundColor: colorFromStringHash(tag, 30),
+                    }}
+                    key={tag}
+                  >
+                    {tag}
+                  </div>
+                ))
+              ) : (
+                <div className="flex gap-2 rounded-lg border-2 border-gray-500 px-2 py-1 text-gray-500 items-center">
+                  Add muscle groups
+                  <Pencil size={16} />
+                </div>
+              )}
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Edit muscle groups</DropdownMenuLabel>

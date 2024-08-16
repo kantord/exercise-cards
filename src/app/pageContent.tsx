@@ -1,10 +1,10 @@
 'use client';
 
-import { ExerciseCard } from '@/components/exercise-card';
 import { Button } from '@/components/ui/button';
 import { useCardStore } from './stores';
 import { useMemo } from 'react';
 import { sortBy } from 'lodash';
+import { ExerciseCard } from '@/components/organisms/exercise-card';
 
 export default function HomePageContent() {
   const { cards, addCard } = useCardStore();
