@@ -36,6 +36,7 @@ import { Card as CardType, useCardStore, useExerciseGroups } from '@/app/stores'
 import { SyntheticEvent, useCallback } from 'react';
 
 import { createHash } from 'crypto';
+import DropdownMenuLabelWithIcon from './structures/DropdownMenuLabelWithIcon';
 
 function colorFromStringHash(str: string, lightness: number): string {
   const hash = createHash('sha256').update(str).digest('hex');
@@ -84,37 +85,14 @@ type ExerciseGroupLabelProps = {
 function ExerciseGroupLabel({ value }: ExerciseGroupLabelProps) {
   switch (value) {
     case 'cardio':
-      return (
-        <DropdownMenuLabel>
-          <div className="flex items-center">
-            <div>
-              <Heart className="mr-2 h-3 w-3" />
-            </div>
-            <div>Cardio</div>
-          </div>
-        </DropdownMenuLabel>
-      );
+      return <DropdownMenuLabelWithIcon icon={Heart}>Cardio</DropdownMenuLabelWithIcon>;
     case 'muscle':
       return (
-        <DropdownMenuLabel>
-          <div className="flex items-center">
-            <div>
-              <BicepsFlexed className="mr-2 h-3 w-3" />
-            </div>
-            <div>Muscle building</div>
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuLabelWithIcon icon={BicepsFlexed}>Muscle building</DropdownMenuLabelWithIcon>
       );
     case 'stretching':
       return (
-        <DropdownMenuLabel>
-          <div className="flex items-center">
-            <div>
-              <MoveHorizontal className="mr-2 h-3 w-3" />
-            </div>
-            <div>Stretching</div>
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuLabelWithIcon icon={MoveHorizontal}>Stretching</DropdownMenuLabelWithIcon>
       );
     default:
       throw new Error(`unknown exercise group '${value}'`);
