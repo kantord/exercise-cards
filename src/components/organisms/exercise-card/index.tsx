@@ -13,6 +13,8 @@ import { SyntheticEvent, useCallback } from 'react';
 import ExerciseGroupEditor from './exercise-group-editor';
 import { colorFromStringHash } from '@/lib/utils';
 import ActionsMenu from './actions-menu';
+import { Circle, CircleCheckBig } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   card: CardType;
@@ -69,10 +71,17 @@ export function ExerciseCard({ card }: Props) {
         <ExerciseGroupEditor card={card} />
       </CardContent>
       <CardFooter className="flex items-center justify-between">
-        <div />
+        <div className="flex gap-1">
+          {[
+            ...doneToday.map(() => <CircleCheckBig key={uuidv4()} className="h-4 w-4" />),
+            ...Array(card.sets - doneToday.length)
+              .fill(null)
+              .map(() => <Circle key={uuidv4()} className="h-4 w-4" />),
+          ]}
+        </div>
         <div className="flex gap-4">
           <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
-            Done ({doneToday.length}/{card.sets})
+            Done
           </Button>
           <ActionsMenu card={card} />
         </div>
