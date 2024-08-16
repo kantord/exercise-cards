@@ -14,8 +14,11 @@ export default function NewCard({ references }: Props) {
     const id = addCard();
     setTimeout(() => {
       const elementToScrollTo = references.current[id];
-      elementToScrollTo.scrollIntoView();
-      elementToScrollTo.focus()
+      elementToScrollTo.scrollIntoView({
+        block: 'center',
+        inline: 'center',
+      });
+      elementToScrollTo.focus();
     }, 0);
   }, [addCard, references]);
 
