@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "npx serve@latest out",
+    "build-and-start": "npm run build && npm run start",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
