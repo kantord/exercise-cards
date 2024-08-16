@@ -83,7 +83,10 @@ export function ExerciseCard({ card }: Props) {
   const exerciseGroups = useExerciseGroups();
 
   return (
-    <Card className="max-w-xl min-w-md w-full" style={{ backgroundColor: colorFromStringHash(card.id, 95) }}>
+    <Card
+      className="min-w-md w-full max-w-xl"
+      style={{ backgroundColor: colorFromStringHash(card.id, 95) }}
+    >
       <CardHeader>
         <CardTitle {...editableTitle} />
         <CardDescription {...editableDescription} />
@@ -100,6 +103,31 @@ export function ExerciseCard({ card }: Props) {
             {tag}
           </div>
         ))}
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Pencil  size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Edit muscle groups</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <ScrollArea className="h-[200px]">
+              {exerciseGroups.map(({ superGroup, items }) => (
+                <>
+                  <DropdownMenuLabel>{superGroup}</DropdownMenuLabel>
+                  {items.map((item) => (
+                    <DropdownMenuCheckboxItem
+                      key={item.name}
+                      checked={card.groups.includes(item.name)}
+                      onCheckedChange={() => toggleGroupInCard(card.id, item.name)}
+                    >
+                      {item.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </>
+              ))}
+            </ScrollArea>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <Link href="#" target="_blank" className="text-primary hover:underline" prefetch={false}>
@@ -118,25 +146,6 @@ export function ExerciseCard({ card }: Props) {
                 <Trash2 className="mr-2 h-4 w-4" />
                 <span>Permanently delete</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Muscle groups</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <ScrollArea className="h-[200px]">
-                {exerciseGroups.map(({ superGroup, items }) => (
-                  <>
-                    <DropdownMenuLabel>{superGroup}</DropdownMenuLabel>
-                    {items.map((item) => (
-                      <DropdownMenuCheckboxItem
-                        key={item.name}
-                        checked={card.groups.includes(item.name)}
-                        onCheckedChange={() => toggleGroupInCard(card.id, item.name)}
-                      >
-                        {item.name}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </>
-                ))}
-              </ScrollArea>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
