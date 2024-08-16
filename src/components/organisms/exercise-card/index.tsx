@@ -60,7 +60,7 @@ export function ExerciseCard({ card }: Props) {
 
   return (
     <Card
-      className="min-w-md w-full max-w-xl"
+      className="w-full"
       style={{ backgroundColor: colorFromStringHash(card.id, isDone ? 98 : 95, isDone ? 50 : 80) }}
     >
       <CardHeader>
