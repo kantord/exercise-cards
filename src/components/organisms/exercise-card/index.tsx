@@ -47,7 +47,7 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
 
 export function ExerciseCard({ card }: Props) {
   const { practiceCard } = useCardStore();
-  const { isDone } = useAnalyzedCard(card);
+  const { isDone, doneToday } = useAnalyzedCard(card);
   const editableTitle = useInPlaceEditableField('title', card);
   const editableDescription = useInPlaceEditableField('description', card);
   const strikeThroughWhenDone = isDone
@@ -72,7 +72,7 @@ export function ExerciseCard({ card }: Props) {
         <div />
         <div className="flex gap-4">
           <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
-            Done
+            Done ({doneToday.length}/{card.sets})
           </Button>
           <ActionsMenu card={card} />
         </div>

@@ -8,6 +8,9 @@ type LogItem = {
   created: Date;
 };
 
+export const validSetCounts = [1, 2, 3, 4, 5, 6, 7];
+export type ValidSetCount = (typeof validSetCounts)[number];
+
 export type Card = {
   id: string;
   title: string;
@@ -15,6 +18,7 @@ export type Card = {
   learnHref?: string;
   groups: ExerciseGroupName[];
   log: LogItem[];
+  sets: ValidSetCount;
 };
 
 type CardStore = {
@@ -44,6 +48,7 @@ export const useCardStore = create<CardStore>()(
               description: 'Card description',
               groups: [],
               log: [],
+              sets: 1,
             },
           ],
         });
@@ -174,8 +179,13 @@ export const useExerciseGroups = (): SortedExerciseGroups => {
 };
 
 export const useAnalyzedCard = (card: Card) => {
+  const doneToday = card.log
+    .slice(0, Math.max(...validSetCounts))
+    .filter((item) => isToday(item.created));
+
   return {
     ...card,
-    isDone: card.log.length > 0 && isToday(card.log[0].created),
+    doneToday,
+    isDone: doneToday.length >= card.sets,
   };
 };
