@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useCardStore } from './stores';
 import { useMemo } from 'react';
 import { sortBy } from 'lodash';
@@ -8,7 +7,7 @@ import { ExerciseCard } from '@/components/organisms/exercise-card';
 import NewCard from '@/components/organisms/new-card';
 
 export default function HomePageContent() {
-  const { cards, addCard } = useCardStore();
+  const { cards } = useCardStore();
   const sortedCards = useMemo(() => {
     return sortBy(cards, (card) => card.id);
   }, [cards]);
