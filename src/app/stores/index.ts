@@ -24,6 +24,7 @@ type CardStore = {
   updateCard: (cardId: string, newCard: Card) => void;
   toggleGroupInCard: (cardId: string, groupName: string) => void;
   practiceCard: (cardId: string) => void;
+  resetProgressToday: (cardId: string) => void;
 };
 
 export const useCardStore = create<CardStore>()(
@@ -100,6 +101,23 @@ export const useCardStore = create<CardStore>()(
                 },
                 ...card.log,
               ],
+            },
+          ],
+        });
+      },
+
+      resetProgressToday(cardId: string) {
+        const card = get().cards.find((card) => card.id === cardId);
+        if (card === undefined) {
+          throw new Error('card not found');
+        }
+
+        set({
+          cards: [
+            ...get().cards.filter((card) => card.id !== cardId),
+            {
+              ...card,
+              log: card.log.filter((item) => !isToday(item.created)),
             },
           ],
         });
