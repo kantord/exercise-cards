@@ -24,7 +24,14 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import {
+  BicepsFlexed,
+  EllipsisVertical,
+  Heart,
+  MoveHorizontal,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 import { Card as CardType, useCardStore, useExerciseGroups } from '@/app/stores';
 import { SyntheticEvent, useCallback } from 'react';
 
@@ -70,6 +77,50 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
   };
 };
 
+type ExerciseGroupLabelProps = {
+  value: string;
+};
+
+function ExerciseGroupLabel({ value }: ExerciseGroupLabelProps) {
+  switch (value) {
+    case 'cardio':
+      return (
+        <DropdownMenuLabel>
+          <div className="flex items-center">
+            <div>
+              <Heart className="mr-2 h-3 w-3" />
+            </div>
+            <div>Cardio</div>
+          </div>
+        </DropdownMenuLabel>
+      );
+    case 'muscle':
+      return (
+        <DropdownMenuLabel>
+          <div className="flex items-center">
+            <div>
+              <BicepsFlexed className="mr-2 h-3 w-3" />
+            </div>
+            <div>Muscle building</div>
+          </div>
+        </DropdownMenuLabel>
+      );
+    case 'stretching':
+      return (
+        <DropdownMenuLabel>
+          <div className="flex items-center">
+            <div>
+              <MoveHorizontal className="mr-2 h-3 w-3" />
+            </div>
+            <div>Stretching</div>
+          </div>
+        </DropdownMenuLabel>
+      );
+    default:
+      throw new Error(`unknown exercise group '${value}'`);
+  }
+}
+
 export function ExerciseCard({ card }: Props) {
   const { deleteCard, toggleGroupInCard } = useCardStore();
   const handleDeleteCard = useCallback(() => {
@@ -105,15 +156,15 @@ export function ExerciseCard({ card }: Props) {
         ))}
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Pencil  size={18} />
+            <Pencil size={18} />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Edit muscle groups</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <ScrollArea className="h-[200px]">
-              {exerciseGroups.map(({ superGroup, items }) => (
+              {exerciseGroups.map(({ type, items }) => (
                 <>
-                  <DropdownMenuLabel>{superGroup}</DropdownMenuLabel>
+                  <ExerciseGroupLabel value={type} />
                   {items.map((item) => (
                     <DropdownMenuCheckboxItem
                       key={item.name}

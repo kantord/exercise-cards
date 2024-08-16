@@ -102,25 +102,25 @@ type ExerciseGroup = (typeof exerciseGroups)[number];
 type ExerciseGroupName = ExerciseGroup['name'];
 
 type SortedExerciseGroups = {
-  superGroup: string;
+  type: string;
   items: ExerciseGroup[];
 }[];
 
 export const useExerciseGroups = (): SortedExerciseGroups => {
-  const superGroups: Record<string, Set<ExerciseGroup>> = {};
+  const types: Record<string, Set<ExerciseGroup>> = {};
 
   for (const group of exerciseGroups) {
-    if (!(group.supergroup in superGroups)) {
-      superGroups[group.supergroup] = new Set();
+    if (!(group.type in types)) {
+      types[group.type] = new Set();
     }
 
-    superGroups[group.supergroup].add(group);
+    types[group.type].add(group);
   }
 
-  return Object.keys(superGroups)
+  return Object.keys(types)
     .sort()
-    .map((superGroup: string) => ({
-      superGroup,
-      items: sortBy(Array.from(superGroups[superGroup]), (item: ExerciseGroup) => item.name),
+    .map((type: string) => ({
+      type,
+      items: sortBy(Array.from(types[type]), (item: ExerciseGroup) => item.name),
     }));
 };
