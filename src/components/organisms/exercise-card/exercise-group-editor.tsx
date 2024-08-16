@@ -1,4 +1,4 @@
-import { Card, useCardStore, useExerciseGroups } from '@/app/stores';
+import { Card, useAnalyzedCard, useCardStore, useExerciseGroups } from '@/app/stores';
 import DropdownMenuLabelWithIcon from '@/components/structures/DropdownMenuLabelWithIcon';
 import {
   DropdownMenu,
@@ -39,6 +39,7 @@ type Props = {
 
 export default function ExerciseGroupEditor({ card }: Props) {
   const { toggleGroupInCard } = useCardStore();
+  const { isDone } = useAnalyzedCard(card);
   const exerciseGroups = useExerciseGroups();
 
   return (
@@ -50,7 +51,7 @@ export default function ExerciseGroupEditor({ card }: Props) {
               <div
                 className="rounded-lg px-2 py-1 text-white"
                 style={{
-                  backgroundColor: colorFromStringHash(tag, 30),
+                  backgroundColor: colorFromStringHash(tag, isDone ? 50: 30, isDone ? 20: 40),
                 }}
                 key={tag}
               >

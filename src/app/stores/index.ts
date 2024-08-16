@@ -2,6 +2,11 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
 import { sortBy } from 'lodash';
+import { isToday } from 'date-fns';
+
+type LogItem = {
+  created: Date;
+};
 
 export type Card = {
   id: string;
@@ -9,6 +14,7 @@ export type Card = {
   description: string;
   learnHref?: string;
   groups: ExerciseGroupName[];
+  log: LogItem[];
 };
 
 type CardStore = {
@@ -17,6 +23,7 @@ type CardStore = {
   deleteCard: (cardId: string) => void;
   updateCard: (cardId: string, newCard: Card) => void;
   toggleGroupInCard: (cardId: string, groupName: string) => void;
+  practiceCard: (cardId: string) => void;
 };
 
 export const useCardStore = create<CardStore>()(
@@ -35,6 +42,7 @@ export const useCardStore = create<CardStore>()(
               title: 'New Card',
               description: 'Card description',
               groups: [],
+              log: [],
             },
           ],
         });
@@ -70,6 +78,28 @@ export const useCardStore = create<CardStore>()(
             {
               ...card,
               groups: newGroups,
+            },
+          ],
+        });
+      },
+
+      practiceCard(cardId: string) {
+        const card = get().cards.find((card) => card.id === cardId);
+        if (card === undefined) {
+          throw new Error('card not found');
+        }
+
+        set({
+          cards: [
+            ...get().cards.filter((card) => card.id !== cardId),
+            {
+              ...card,
+              log: [
+                {
+                  created: new Date(),
+                },
+                ...card.log,
+              ],
             },
           ],
         });
@@ -123,4 +153,11 @@ export const useExerciseGroups = (): SortedExerciseGroups => {
       type,
       items: sortBy(Array.from(types[type]), (item: ExerciseGroup) => item.name),
     }));
+};
+
+export const useAnalyzedCard = (card: Card) => {
+  return {
+    ...card,
+    isDone: card.log.length > 0 && isToday(card.log[0].created),
+  };
 };

@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card as CardType, useCardStore } from '@/app/stores';
+import { Card as CardType, useAnalyzedCard, useCardStore } from '@/app/stores';
 import { SyntheticEvent, useCallback } from 'react';
 
 import ExerciseGroupEditor from './exercise-group-editor';
@@ -46,17 +46,24 @@ const useInPlaceEditableField = (attributeName: keyof CardType, card: CardType) 
 };
 
 export function ExerciseCard({ card }: Props) {
+  const { practiceCard } = useCardStore();
+  const { isDone } = useAnalyzedCard(card);
   const editableTitle = useInPlaceEditableField('title', card);
   const editableDescription = useInPlaceEditableField('description', card);
+  const strikeThroughWhenDone = isDone
+    ? {
+        className: 'line-through',
+      }
+    : {};
 
   return (
     <Card
       className="min-w-md w-full max-w-xl"
-      style={{ backgroundColor: colorFromStringHash(card.id, 95) }}
+      style={{ backgroundColor: colorFromStringHash(card.id, isDone ? 98 : 95, isDone ? 50 : 80) }}
     >
       <CardHeader>
-        <CardTitle {...editableTitle} />
-        <CardDescription {...editableDescription} />
+        <CardTitle {...strikeThroughWhenDone} {...editableTitle} />
+        <CardDescription {...strikeThroughWhenDone} {...editableDescription} />
       </CardHeader>
       <CardContent>
         <ExerciseGroupEditor card={card} />
@@ -64,7 +71,9 @@ export function ExerciseCard({ card }: Props) {
       <CardFooter className="flex items-center justify-between">
         <div />
         <div className="flex gap-4">
-          <Button className="px-6 py-2">Done</Button>
+          <Button className="px-6 py-2" onClick={() => practiceCard(card.id)} disabled={isDone}>
+            Done
+          </Button>
           <ActionsMenu card={card} />
         </div>
       </CardFooter>
