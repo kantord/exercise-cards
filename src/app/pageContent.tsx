@@ -15,7 +15,7 @@ export default function HomePageContent() {
 
   return (
     <main className="flex flex-col justify-center p-8">
-      <div className="mx-auto flex w-full max-w-[800px] flex-row flex-wrap justify-center gap-4">
+      <div className="flex w-full flex-row flex-wrap justify-center gap-4">
         {sortedCards.map((card) => (
           <div
             tabIndex={0}
