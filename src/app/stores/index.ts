@@ -134,7 +134,7 @@ export const useCardStore = create<CardStore>()(
   ),
 );
 
-const exerciseGroups = [
+export const exerciseGroups = [
   { name: 'Chest', supergroup: 'Upper Body', type: 'muscle' },
   { name: 'Back', supergroup: 'Upper Body', type: 'muscle' },
   { name: 'Shoulders', supergroup: 'Upper Body', type: 'muscle' },
@@ -152,7 +152,7 @@ const exerciseGroups = [
   { name: 'Cardio', supergroup: 'Cardio', type: 'cardio' },
 ];
 type ExerciseGroup = (typeof exerciseGroups)[number];
-type ExerciseGroupName = ExerciseGroup['name'];
+export type ExerciseGroupName = ExerciseGroup['name'];
 
 type SortedExerciseGroups = {
   type: string;
