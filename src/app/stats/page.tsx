@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
 import { useGroupedLog } from '../stores';
-import { Bar, BarChart, XAxis } from 'recharts';
+import { Bar, BarChart, LabelList, XAxis } from 'recharts';
 import { reverse } from 'lodash';
 import { formatDayOfWeekOrToday } from '@/lib/utils';
 
@@ -26,9 +26,11 @@ export default function StatsPage() {
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={value => formatDayOfWeekOrToday(value, true)}
+                tickFormatter={(value) => formatDayOfWeekOrToday(value, true)}
               />
-              <Bar dataKey="count" />
+              <Bar dataKey="count">
+                <LabelList dataKey="count" position="top" />
+              </Bar>
             </BarChart>
           </ChartContainer>
         </CardContent>
