@@ -1,41 +1,20 @@
 'use client';
 
-import { groupBy, reverse, sortBy } from 'lodash';
-import { useExerciseLog } from '../stores';
-import { format, isToday, isYesterday, sub } from 'date-fns';
+import { formatDayOfWeekOrToday } from '@/lib/utils';
+import { useGroupedLog } from '../stores';
+import { format } from 'date-fns';
 
-function formatDate(date: Date) {
-  if (isToday(date)) {
-    return 'Today';
-  }
 
-  if (isYesterday(date)) {
-    return 'Yesterday';
-  }
-
-  return format(date, 'EEEE');
-}
 
 export default function LogPage() {
-  const log = useExerciseLog(1000);
-  const datesToDisplay = [0, 1, 2, 3, 4, 5, 6].map((days) => sub(new Date(), { days }));
-
-  const dateKeys = datesToDisplay.map((item) => format(item, 'MM/dd/yyyy'));
-
-  const logByDay = groupBy(log, (item) => {
-    const formattedDate = format(item.created, 'MM/dd/yyyy');
-
-    return formattedDate;
-  });
+  const log = useGroupedLog();
 
   return (
     <div className="px-8 py-6">
-      {dateKeys.map((key, i) => {
-        const values = reverse(sortBy(logByDay[key] ?? [], (item) => item.created));
-
+      {log.map(({ date, values }) => {
         return (
-          <div key={key} className="mb-14">
-            <h2 className="mb-4 text-4xl">{formatDate(datesToDisplay[i])}</h2>
+          <div key={date.toString()} className="mb-14">
+            <h2 className="mb-4 text-4xl">{formatDayOfWeekOrToday(date, false)}</h2>
             <div>
               {values.length > 0 ? (
                 values.map((item) => (

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
-import { sortBy } from 'lodash';
-import { isToday } from 'date-fns';
+import { groupBy, reverse, sortBy } from 'lodash';
+import { format, isToday, sub } from 'date-fns';
 
 type LogItem = {
   created: Date;
@@ -191,24 +191,42 @@ export const useAnalyzedCard = (card: Card) => {
 };
 
 type ExerciseLogItem = {
-  id: string
-  created: Date
-  card: Card
-}
+  id: string;
+  created: Date;
+  card: Card;
+};
 
 export const useExerciseLog = (limit: number): ExerciseLogItem[] => {
-  const {cards} = useCardStore()
-  const result = []
+  const { cards } = useCardStore();
+  const result = [];
 
   for (const card of cards) {
     for (const logItem of card.log.slice(0, limit)) {
       result.push({
         ...logItem,
         id: `${logItem.created}-${card.id}`,
-        card
-      })
+        card,
+      });
     }
   }
 
-  return sortBy(result, item => item.created).slice(0, limit)
-}
+  return sortBy(result, (item) => item.created).slice(0, limit);
+};
+
+export const useGroupedLog = () => {
+  const log = useExerciseLog(1000);
+  const datesToDisplay = [0, 1, 2, 3, 4, 5, 6].map((days) => sub(new Date(), { days }));
+
+  const dateKeys = datesToDisplay.map((item) => format(item, 'MM/dd/yyyy'));
+
+  const logByDay = groupBy(log, (item) => {
+    const formattedDate = format(item.created, 'MM/dd/yyyy');
+
+    return formattedDate;
+  });
+
+  return dateKeys.map((key, i) => ({
+    date: datesToDisplay[i],
+    values: reverse(sortBy(logByDay[key] ?? [], (item) => item.created)),
+  }));
+};
