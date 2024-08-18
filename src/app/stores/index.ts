@@ -189,3 +189,26 @@ export const useAnalyzedCard = (card: Card) => {
     isDone: doneToday.length >= card.sets,
   };
 };
+
+type ExerciseLogItem = {
+  id: string
+  created: Date
+  card: Card
+}
+
+export const useExerciseLog = (limit: number): ExerciseLogItem[] => {
+  const {cards} = useCardStore()
+  const result = []
+
+  for (const card of cards) {
+    for (const logItem of card.log.slice(0, limit)) {
+      result.push({
+        ...logItem,
+        id: `${logItem.created}-${card.id}`,
+        card
+      })
+    }
+  }
+
+  return sortBy(result, item => item.created).slice(0, limit)
+}
